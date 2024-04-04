@@ -21,12 +21,28 @@ def index():
         200
     )
 
-
 @app.route('/demo_json')
 def demo_json():
-    pet_json = '{"id": 1, "name" : "Fido", "species" : "Dog"}'
-    return make_response(pet_json, 200)
+    pet_dict = {'id': 1,
+                'name': 'Fido',
+                'species': 'Dog'
+                }
+    return make_response(pet_dict, 200)
 
+
+
+@app.route('/species/<string:species>')
+def pet_by_species(species):
+    pets = []  # array to store a dictionary for each pet
+    for pet in Pet.query.filter_by(species=species).all():
+        pet_dict = {'id': pet.id,
+                    'name': pet.name,
+                    }
+        pets.append(pet_dict)
+    body = {'count': len(pets),
+            'pets': pets
+            }
+    return make_response(body, 200)
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
